@@ -6,7 +6,7 @@
 /*   By: kwurster <kwurster@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 10:50:28 by kwurster          #+#    #+#             */
-/*   Updated: 2024/06/15 07:37:27 by kwurster         ###   ########.fr       */
+/*   Updated: 2024/06/15 12:50:39 by kwurster         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <wait.h>
+
+# define HERE_DOC_FILE ".tmp_here_doc"
 
 typedef enum e_exit_status
 {
@@ -51,9 +53,23 @@ t_bool		cmds_pipe_io(t_cmd *from, t_cmd *to);
 t_bool		cmd_new(const char *cmd_str, char *const *envp, t_cmd *out);
 t_bool		cmd_new_with_file_in(const char *cmd_str, const char *file_in,
 				char *const *envp, t_cmd *out);
+t_bool		cmd_new_with_heredoc_in(const char *cmd_str, int fd,
+				char *const *envp, t_cmd *out);
 t_bool		cmd_new_with_file_out(const char *cmd_str, const char *file_out,
 				char *const *envp, t_cmd *out);
+t_bool		cmd_new_with_file_out_append(const char *cmd_str,
+				const char *file_out, char *const *envp, t_cmd *out);
 pid_t		cmd_exec(t_cmd *cmd, t_vec *cmds, char *const *envp);
 int			cmds_exec_and_wait_all(t_vec *cmds, char *const *envp);
+
+void		add_bonus_cmds(int cmds_count, char *const *argv, char *const *envp,
+				t_vec *out);
+void		add_last_cmd(int cmds_count, char *const *argv, char *const *envp,
+				t_vec *out);
+void		argv_to_cmds(int argc, char *const *argv, char *const *envp,
+				t_vec *out);
+
+void		bonus_argv_to_cmds(int argc, char *const *argv, char *const *envp,
+				t_vec *out);
 
 #endif

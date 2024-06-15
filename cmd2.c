@@ -6,26 +6,47 @@
 /*   By: kwurster <kwurster@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/15 07:25:04 by kwurster          #+#    #+#             */
-/*   Updated: 2024/06/15 07:26:07 by kwurster         ###   ########.fr       */
+/*   Updated: 2024/06/15 12:33:58 by kwurster         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-static t_bool	cmd_set_file_in(t_cmd *cmd, const char *file_in)
+t_bool	cmd_new_with_heredoc_in(const char *cmd_str, int fd, char *const *envp,
+		t_cmd *out)
 {
-	cmd->in[0] = open(file_in, O_RDONLY);
-	if (cmd->in[0] == -1)
-		perror(file_in);
-	return (cmd->in[0] != -1);
+	cmd_init(out);
+	out->in[0] = fd;
+	if (out->in[0] == -1)
+	{
+		perror(HERE_DOC_FILE);
+		return (false);
+	}
+	if (pipe(out->out) == -1)
+	{
+		close_pipe(out->in);
+		return (false);
+	}
+	out->cmd = cmd_str_to_argv(cstr_view(cmd_str), envp);
+	if (out->cmd == 0)
+	{
+		close_pipe(out->in);
+		close_pipe(out->out);
+		return (false);
+	}
+	return (true);
 }
 
 t_bool	cmd_new_with_file_in(const char *cmd_str, const char *file_in,
 		char *const *envp, t_cmd *out)
 {
 	cmd_init(out);
-	if (!cmd_set_file_in(out, file_in))
+	out->in[0] = open(file_in, O_RDONLY);
+	if (out->in[0] == -1)
+	{
+		perror(file_in);
 		return (false);
+	}
 	if (pipe(out->out) == -1)
 	{
 		close_pipe(out->in);

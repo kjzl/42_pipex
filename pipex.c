@@ -6,19 +6,38 @@
 /*   By: kwurster <kwurster@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/08 16:36:07 by kwurster          #+#    #+#             */
-/*   Updated: 2024/06/15 07:52:31 by kwurster         ###   ########.fr       */
+/*   Updated: 2024/06/15 13:15:05 by kwurster         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
+
+void	add_last_cmd(int cmds_count, char *const *argv, char *const *envp,
+		t_vec *out)
+{
+	if (cmd_new_with_file_out(argv[2 + cmds_count - 1], argv[2 + cmds_count],
+			envp, vec_get_next_uninit(out)))
+	{
+		out->len++;
+		if (out->len > 1 && !cmds_pipe_io(vec_get_at(out, out->len - 2),
+				vec_get_last(out)))
+		{
+			vec_destroy(out, cmd_del);
+			exit(status_err_last_cmd_prep);
+		}
+		return ;
+	}
+	vec_destroy(out, cmd_del);
+	exit(status_err_last_cmd_prep);
+}
 
 /// @brief Handles all commands other than the first and the last
 /// @param cmds_count
 /// @param argv
 /// @param envp
 /// @param out
-static void	handle_bonus_cmds(int cmds_count, char *const *argv,
-		char *const *envp, t_vec *out)
+void	add_bonus_cmds(int cmds_count, char *const *argv, char *const *envp,
+		t_vec *out)
 {
 	int	cmd_i;
 
@@ -35,26 +54,8 @@ static void	handle_bonus_cmds(int cmds_count, char *const *argv,
 				exit(status_err_dup_fd);
 			}
 		}
+		cmd_i++;
 	}
-}
-
-static void	handle_last_cmd(int cmds_count, char *const *argv,
-		char *const *envp, t_vec *out)
-{
-	if (cmd_new_with_file_out(argv[2 + cmds_count - 1], argv[2 + cmds_count],
-			envp, vec_get_next_uninit(out)))
-	{
-		out->len++;
-		if (out->len > 1 && !cmds_pipe_io(vec_get_at(out, out->len - 2),
-				vec_get_last(out)))
-		{
-			vec_destroy(out, cmd_del);
-			exit(status_err_last_cmd_prep);
-		}
-		return ;
-	}
-	vec_destroy(out, cmd_del);
-	exit(status_err_last_cmd_prep);
 }
 
 /// @brief Creates the pipex command-chain from the given program arguments.
@@ -76,8 +77,8 @@ void	argv_to_cmds(int argc, char *const *argv, char *const *envp, t_vec *out)
 	cmds = vec_get(out);
 	if (cmd_new_with_file_in(argv[2], argv[1], envp, cmds))
 		out->len++;
-	handle_bonus_cmds(cmds_count, argv, envp, out);
-	handle_last_cmd(cmds_count, argv, envp, out);
+	add_bonus_cmds(cmds_count, argv, envp, out);
+	add_last_cmd(cmds_count, argv, envp, out);
 }
 
 #ifdef BONUS
@@ -89,16 +90,13 @@ int	main(int argc, char *const *argv, char *const *envp)
 
 	if (argc < 5)
 	{
-		ft_putendl_fd("Usage: ./pipex file_in cmd1 cmd2 [cmd...] file_out", 2);
+		ft_putendl_fd("Usage: ./pipex <file_in/[here_doc <delimiter>]>"
+			"cmd1 cmd2 [cmd...] file_out",
+			2);
 		exit(1);
 	}
-	argv_to_cmds(argc, argv, envp, &cmds);
+	bonus_argv_to_cmds(argc, argv, envp, &cmds);
 	status = cmds_exec_and_wait_all(&cmds, envp);
-	if (status == -1)
-	{
-		vec_destroy(&cmds, cmd_del);
-		return (status_child_err_exec);
-	}
 	if (status == 1)
 	{
 		status = ((t_cmd *)vec_get_last(&cmds))->status;
@@ -106,6 +104,8 @@ int	main(int argc, char *const *argv, char *const *envp)
 		return (status);
 	}
 	vec_destroy(&cmds, cmd_del);
+	if (status == -1)
+		return (status_child_err_exec);
 	if (status == 0)
 		return (1);
 }
@@ -124,11 +124,6 @@ int	main(int argc, char *const *argv, char *const *envp)
 	}
 	argv_to_cmds(argc, argv, envp, &cmds);
 	status = cmds_exec_and_wait_all(&cmds, envp);
-	if (status == -1)
-	{
-		vec_destroy(&cmds, cmd_del);
-		return (status_child_err_exec);
-	}
 	if (status == 1)
 	{
 		status = ((t_cmd *)vec_get_last(&cmds))->status;
@@ -136,6 +131,8 @@ int	main(int argc, char *const *argv, char *const *envp)
 		return (status);
 	}
 	vec_destroy(&cmds, cmd_del);
+	if (status == -1)
+		return (status_child_err_exec);
 	if (status == 0)
 		return (1);
 }

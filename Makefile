@@ -11,6 +11,7 @@ SRCS = \
 	pipex.c\
 	cmd_str_to_argv.c\
 	util.c\
+	bonus.c\
 
 OBJ = $(SRCS:.c=.o)
 
@@ -36,4 +37,4 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all clean fclean re
+.PHONY: all clean fclean re bonus
