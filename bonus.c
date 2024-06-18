@@ -6,7 +6,7 @@
 /*   By: kwurster <kwurster@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/15 12:41:11 by kwurster          #+#    #+#             */
-/*   Updated: 2024/06/18 21:50:37 by kwurster         ###   ########.fr       */
+/*   Updated: 2024/06/18 21:55:21 by kwurster         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,8 +68,8 @@ static int	create_temp_heredoc(t_str_slice delimiter)
 	return (here_doc);
 }
 
-static void	add_last_cmd_bonus(int cmds_count, char *const *argv, char *const *envp,
-		t_vec *out)
+static void	add_last_cmd_bonus(int cmds_count, char *const *argv,
+		char *const *envp, t_vec *out)
 {
 	if (cmd_new_with_file_out_append(argv[2 + cmds_count - 1], argv[2
 				+ cmds_count], envp, vec_get_next_uninit(out)))
