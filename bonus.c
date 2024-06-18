@@ -6,7 +6,7 @@
 /*   By: kwurster <kwurster@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/15 12:41:11 by kwurster          #+#    #+#             */
-/*   Updated: 2024/06/15 13:20:35 by kwurster         ###   ########.fr       */
+/*   Updated: 2024/06/18 21:50:37 by kwurster         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,14 +32,14 @@ static void	read_write_heredoc(int here_doc, t_str_slice delimiter,
 			close(here_doc);
 			close(stdin_dup);
 			free((char *)line.str);
-			free(get_next_line(stdin_dup));
+			get_next_line_finish(stdin_dup);
 			exit(1);
 		}
 	}
 	close(stdin_dup);
 	close(here_doc);
 	free((char *)line.str);
-	free(get_next_line(stdin_dup));
+	get_next_line_finish(stdin_dup);
 }
 
 /// @return The fd of the temporary file containing the here document.
