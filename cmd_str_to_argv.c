@@ -19,9 +19,9 @@ static t_bool	strsls_to_cloned_cstrs_and_cleanup(t_vec *split_cmd,
 	{
 		vec_destroy(split_cmd, 0);
 		str_destroy(cmd_file);
-		return (false);
+		return (FALSE);
 	}
-	return (true);
+	return (TRUE);
 }
 
 /// @brief Transforms a command string into an argv array

@@ -15,7 +15,7 @@
 static void	read_write_heredoc(int here_doc, t_str_slice delimiter,
 		t_str_slice line, int stdin_dup)
 {
-	while (true)
+	while (TRUE)
 	{
 		write(2, "> ", 2);
 		line = cstr_view(get_next_line(stdin_dup));

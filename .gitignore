@@ -10,5 +10,5 @@ compile_commands.json
 # Ignore .clangd file
 .clangd
 
-# Ignore the push_swap binary
-push_swap
+# Ignore the binary
+pipex

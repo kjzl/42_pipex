@@ -20,21 +20,21 @@ t_bool	cmd_new_with_heredoc_in(const char *cmd_str, int fd, char *const *envp,
 	if (out->in[0] == -1)
 	{
 		perror(HERE_DOC_FILE);
-		return (false);
+		return (FALSE);
 	}
 	if (pipe(out->out) == -1)
 	{
 		close_pipe(out->in);
-		return (false);
+		return (FALSE);
 	}
 	out->cmd = cmd_str_to_argv(cstr_view(cmd_str), envp);
 	if (out->cmd == 0)
 	{
 		close_pipe(out->in);
 		close_pipe(out->out);
-		return (false);
+		return (FALSE);
 	}
-	return (true);
+	return (TRUE);
 }
 
 t_bool	cmd_new_with_file_in(const char *cmd_str, const char *file_in,
@@ -45,21 +45,21 @@ t_bool	cmd_new_with_file_in(const char *cmd_str, const char *file_in,
 	if (out->in[0] == -1)
 	{
 		perror(file_in);
-		return (false);
+		return (FALSE);
 	}
 	if (pipe(out->out) == -1)
 	{
 		close_pipe(out->in);
-		return (false);
+		return (FALSE);
 	}
 	out->cmd = cmd_str_to_argv(cstr_view(cmd_str), envp);
 	if (out->cmd == 0)
 	{
 		close_pipe(out->in);
 		close_pipe(out->out);
-		return (false);
+		return (FALSE);
 	}
-	return (true);
+	return (TRUE);
 }
 
 void	cmd_del(void *_cmd)
@@ -107,13 +107,13 @@ pid_t	cmd_exec(t_cmd *cmd, t_vec *cmds, char *const *envp)
 	pid_t	pid;
 
 	pid = fork();
-	ok = true;
+	ok = TRUE;
 	if (pid == 0)
 	{
 		if (cmd->in[0] != -1)
 			ok = dup2(cmd->in[0], 0) != -1;
 		else
-			ok = false;
+			ok = FALSE;
 		if (ok && cmd->out[1] != -1)
 			ok = dup2(cmd->out[1], 1) != -1;
 		cmds_close_pipes(cmds);

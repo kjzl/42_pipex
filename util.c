@@ -36,9 +36,9 @@ void	close_pipe(int *pipe)
 static t_bool	wait_for_cmd_and_get_exit_status(t_cmd *cmd)
 {
 	if (waitpid(cmd->pid, &cmd->status, 0) == -1)
-		return (false);
+		return (FALSE);
 	cmd->status = WEXITSTATUS(cmd->status);
-	return (true);
+	return (TRUE);
 }
 
 /// @brief
@@ -55,7 +55,7 @@ int	cmds_exec_and_wait_all(t_vec *cmds, char *const *envp)
 	size_t	i;
 
 	i = 0;
-	ok = true;
+	ok = TRUE;
 	while (i < cmds->len)
 	{
 		cmd = vec_get_at(cmds, i++);
@@ -64,14 +64,14 @@ int	cmds_exec_and_wait_all(t_vec *cmds, char *const *envp)
 			return (-1);
 		if (pid > 0)
 			continue ;
-		ok = false;
+		ok = FALSE;
 		break ;
 	}
 	cmds_close_pipes(cmds);
 	while (i-- > 0)
 	{
 		if (!wait_for_cmd_and_get_exit_status(vec_get_at(cmds, i)))
-			ok = false;
+			ok = FALSE;
 	}
 	return (ok);
 }

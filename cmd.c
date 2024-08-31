@@ -18,10 +18,10 @@ static t_bool	set_stdin_to_empty_pipe(t_cmd *cmd)
 	int	pipe_fd[2];
 
 	if (pipe(pipe_fd) == -1)
-		return (false);
+		return (FALSE);
 	close(pipe_fd[1]);
 	cmd->in[0] = pipe_fd[0];
-	return (true);
+	return (TRUE);
 }
 
 t_bool	cmd_new_with_file_out_append(const char *cmd_str,
@@ -35,16 +35,16 @@ t_bool	cmd_new_with_file_out_append(const char *cmd_str,
 	{
 		perror(file_out);
 		close_pipe(out->in);
-		return (false);
+		return (FALSE);
 	}
 	out->cmd = cmd_str_to_argv(cstr_view(cmd_str), envp);
 	if (out->cmd == 0)
 	{
 		close_pipe(out->in);
 		close_pipe(out->out);
-		return (false);
+		return (FALSE);
 	}
-	return (true);
+	return (TRUE);
 }
 
 t_bool	cmd_new_with_file_out(const char *cmd_str, const char *file_out,
@@ -58,16 +58,16 @@ t_bool	cmd_new_with_file_out(const char *cmd_str, const char *file_out,
 	{
 		perror(file_out);
 		close_pipe(out->in);
-		return (false);
+		return (FALSE);
 	}
 	out->cmd = cmd_str_to_argv(cstr_view(cmd_str), envp);
 	if (out->cmd == 0)
 	{
 		close_pipe(out->in);
 		close_pipe(out->out);
-		return (false);
+		return (FALSE);
 	}
-	return (true);
+	return (TRUE);
 }
 
 /// @brief Creates a new command with an out pipe/file and an optional in file.
@@ -83,16 +83,16 @@ t_bool	cmd_new(const char *cmd_str, char *const *envp, t_cmd *out)
 	if (pipe(out->out) == -1)
 	{
 		close_pipe(out->in);
-		return (false);
+		return (FALSE);
 	}
 	out->cmd = cmd_str_to_argv(cstr_view(cmd_str), envp);
 	if (out->cmd == 0)
 	{
 		close_pipe(out->in);
 		close_pipe(out->out);
-		return (false);
+		return (FALSE);
 	}
-	return (true);
+	return (TRUE);
 }
 
 /// @brief Connects the output of one command to the input of another.
@@ -104,13 +104,13 @@ t_bool	cmds_pipe_io(t_cmd *from, t_cmd *to)
 	int	tmp;
 
 	if (from->out[0] == -1)
-		return (true);
+		return (TRUE);
 	tmp = to->in[0];
 	to->in[0] = dup(from->out[0]);
 	if (to->in[0] == -1)
 	{
 		to->in[0] = tmp;
-		return (false);
+		return (FALSE);
 	}
 	if (tmp != -1)
 		close(tmp);
@@ -119,5 +119,5 @@ t_bool	cmds_pipe_io(t_cmd *from, t_cmd *to)
 		close(to->in[1]);
 		to->in[1] = -1;
 	}
-	return (true);
+	return (TRUE);
 }
