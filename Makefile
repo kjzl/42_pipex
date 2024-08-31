@@ -1,6 +1,6 @@
 NAME = pipex
-CFLAGS = -Wall -Wextra -Werror -O3 -flto
-# CFLAGS = -g -Og -fanalyzer
+CFLAGS = -Wall -Wextra -Werror -O3
+# CFLAGS = -Wall -Wextra -Werror -g -Og -fanalyzer
 
 LIBFTDIR = ./libft
 LIBFT = $(LIBFTDIR)/libft.a

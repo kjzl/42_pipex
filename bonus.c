@@ -75,12 +75,6 @@ static void	add_last_cmd_bonus(int cmds_count, char *const *argv,
 				+ cmds_count], envp, vec_get_next_uninit(out)))
 	{
 		out->len++;
-		if (out->len > 1 && !cmds_pipe_io(vec_get_at(out, out->len - 2),
-				vec_get_last(out)))
-		{
-			vec_destroy(out, cmd_del);
-			exit(status_err_last_cmd_prep);
-		}
 		return ;
 	}
 	vec_destroy(out, cmd_del);

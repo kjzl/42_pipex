@@ -36,7 +36,7 @@ char	**cmd_str_to_argv(t_str_slice cmd, char *const *envp)
 	char	**out;
 
 	split_cmd = strsl_split(cmd, cstr_slice(" ", 1));
-	if (split_cmd.mem_err
+	if (split_cmd.len == 0 || split_cmd.mem_err
 		|| !find_file_on_path_perror(*(t_str_slice *)vec_get(&split_cmd), envp,
 			X_OK, &cmd_file))
 	{
